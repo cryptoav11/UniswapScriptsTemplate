@@ -6,15 +6,21 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cryptoav11/UniswapScriptsTemplate.git"
-  },
   "keywords": [],
-  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/cryptoav11/UniswapScriptsTemplate/issues"
-  },
-  "homepage": "https://github.com/cryptoav11/UniswapScriptsTemplate#readme"
+  "dependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@nomiclabs/hardhat-waffle": "^2.0.6",
+    "@types/sinon-chai": "^3.2.9",
+    "@uniswap/sdk": "^3.0.3",
+    "@uniswap/sdk-core": "^4.0.2",
+    "@uniswap/smart-order-router": "^3.13.2-hotfix2",
+    "@uniswap/v3-core": "^1.0.1",
+    "@uniswap/v3-periphery": "^1.4.3",
+    "@uniswap/v3-sdk": "^3.9.0",
+    "dotenv": "^16.3.1",
+    "ethereum-waffle": "^4.0.10",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.14.0"
+  }
 }
