@@ -1,16 +1,42 @@
 const {Trade: RouterTrade, MixedRouteTrade} = require("@uniswap/router-sdk");
-const {Trade: V2Trade} = require("@uniswap/v2-sdk");
 const {Trade: V3Trade, Pool, nearestUsableTick, TickMath, TICK_SPACINGS} = require("@uniswap/v3-sdk");
+const { computePairAddress, Pair, Trade: V2Trade, Route: RouteV2 } = require('@uniswap/v2-sdk')
 const hardhat = require("hardhat");
 const JSBI = require("jsbi");
 const IUniswapV3Pool = require('@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json')
-const {Percent, Ether, Token} = require("@uniswap/sdk-core");
+const {Percent, Ether, Token, CurrencyAmount} = require("@uniswap/sdk-core");
 const erc20Abi = require("../abis/erc20.json");
 
 const ETHER = Ether.onChain(1)
 const WETH = new Token(1, '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', 18, 'WETH', 'Wrapped Ether')
 const USDC = new Token(1, '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 6, 'USDC', 'USD Coin')
 const UNI = new Token(1, '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984', 18, 'UNI', 'Uni Token')
+
+const V2_FACTORY = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'
+
+const V2_ABI = [
+    {
+        constant: true,
+        inputs: [],
+        name: 'getReserves',
+        outputs: [
+            {internalType: 'uint112', name: 'reserve0', type: 'uint112'},
+            {internalType: 'uint112', name: 'reserve1', type: 'uint112'},
+            {internalType: 'uint32', name: 'blockTimestampLast', type: 'uint32'},
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+    },
+]
+
+const getPair = async (tokenA, tokenB, provider) => {
+    const pairAddress = computePairAddress({ factoryAddress: V2_FACTORY, tokenA, tokenB })
+    const contract = new hardhat.ethers.Contract(pairAddress, V2_ABI, provider)
+    const { reserve0, reserve1 } = await contract.getReserves()
+    const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
+    return new Pair(CurrencyAmount.fromRawAmount(token0, reserve0), CurrencyAmount.fromRawAmount(token1, reserve1))
+}
 
 const buildTrade = (trades) => {
     return new RouterTrade({
@@ -87,4 +113,4 @@ const logBalances = async (recipient, provider) => {
     console.log('uniBalance', hardhat.ethers.utils.formatUnits(uniBalance, 18))
 }
 
-module.exports = { buildTrade, getPool, swapOptions, logBalances }
+module.exports = { buildTrade, getPool, swapOptions, logBalances, getPair }
