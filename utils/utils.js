@@ -11,6 +11,7 @@ const ETHER = Ether.onChain(1)
 const WETH = new Token(1, '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', 18, 'WETH', 'Wrapped Ether')
 const USDC = new Token(1, '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 6, 'USDC', 'USD Coin')
 const UNI = new Token(1, '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984', 18, 'UNI', 'Uni Token')
+const DAI = new Token(1, '0x6b175474e89094c44da98b954eedeac495271d0f', 18, 'DAI', 'Dai Stablecoin')
 
 const V2_FACTORY = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'
 
@@ -101,16 +102,19 @@ const logBalances = async (recipient, provider) => {
     const wethContract = new hardhat.ethers.Contract(WETH.address, erc20Abi, provider)
     const usdcContract = new hardhat.ethers.Contract(USDC.address, erc20Abi, provider)
     const uniContract = new hardhat.ethers.Contract(UNI.address, erc20Abi, provider)
+    const daiContract = new hardhat.ethers.Contract(DAI.address, erc20Abi, provider)
 
     const ethBalance = await provider.getBalance(recipient)
     const wethBalance = await wethContract.balanceOf(recipient)
     const usdcBalance = await usdcContract.balanceOf(recipient)
     const uniBalance = await uniContract.balanceOf(recipient)
+    const daiBalance = await daiContract.balanceOf(recipient)
 
     console.log('ethBalance', hardhat.ethers.utils.formatUnits(ethBalance, 18))
     console.log('wethBalance', hardhat.ethers.utils.formatUnits(wethBalance, 18))
     console.log('usdcBalance', hardhat.ethers.utils.formatUnits(usdcBalance, 6))
     console.log('uniBalance', hardhat.ethers.utils.formatUnits(uniBalance, 18))
+    console.log('daiBalance', hardhat.ethers.utils.formatUnits(daiBalance, 18))
 }
 
 module.exports = { buildTrade, getPool, swapOptions, logBalances, getPair }
